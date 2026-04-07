@@ -21,6 +21,7 @@ h1{font-size:1.6rem;font-weight:800;}
 body.hidden-mode .private{filter:blur(6px);user-select:none;pointer-events:none;}
 body.hidden-mode .editable{pointer-events:none;}
 body.hidden-mode #barChart{filter:blur(6px);}
+body.hidden-mode #historyChart{filter:blur(6px);}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
@@ -83,15 +84,15 @@ footer{text-align:center;color:var(--muted);font-size:0.7rem;margin-top:20px;}
 </head>
 <body>
 <header>
-  <div><h1>Portafolio Fran</h1><div class="subtitle">Click any value to edit - All amounts in USD</div></div>
+  <div><h1>Fran's Portfolio</h1><div class="subtitle">Click any value to edit - All amounts in USD</div></div>
   <div class="header-right">
-    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">Light</button>
-    <button class="icon-btn" id="eyeBtn" onclick="toggleHide()">Mostrar</button>
-    <button class="icon-btn" onclick="exportHTML()">Exportar</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">☀️ Light</button>
+    <button class="icon-btn" id="eyeBtn" onclick="toggleHide()">👁 Show</button>
+    <button class="icon-btn" onclick="exportHTML()">Export</button>
     <div class="ts-pill" id="ts">Loading...</div>
   </div>
 </header>
-<div class="hint"><span>Haz click en cualquier numero para editarlo</span></div>
+<div class="hint"><span>Click any number to edit it</span></div>
 
 <div class="cards">
   <div class="card c-total"><div class="card-label">Total Portfolio</div><div class="card-value private" id="c-total">-</div><div class="card-sub" id="c-total-sub">-</div></div>
@@ -120,20 +121,18 @@ footer{text-align:center;color:var(--muted);font-size:0.7rem;margin-top:20px;}
 
 <div class="bottom-row">
   <div class="panel"><div class="panel-title">AAVE Polygon - Lending</div><div class="private" id="aaveList"></div></div>
-  <div class="panel"><div class="panel-title">Ledger - Cold Wallet</div><div class="private" id="ledgerList"></div></div>
-</div>
+  <div class="panel"><div class="panel-title">Ledger - Cold Wallet</div><div class="private" id="ledgerList"></div></div></div>
 <div class="bottom-row">
-  <div class="panel"><div class="panel-title">Other Positions</div><div class="private" id="otherList"></div></div>
-  <div class="panel" style="background:transparent;border:none;"></div>
+  <div class="panel"><div class="panel-title">Other Positions</div><div class="private" id="otherList"></div></div>  <div class="panel" style="background:transparent;border:none;"></div>
 </div>
 
 <div class="tpanel">
   <div class="panel-title" style="display:flex;justify-content:space-between;align-items:center;">
-    <span>Evolucion del Portfolio</span>
-    <button class="icon-btn" onclick="clearHistory()" style="font-size:0.7rem;padding:2px 8px;">Borrar historial</button>
+    <span>Portfolio Evolution</span>
+    <button class="icon-btn" onclick="clearHistory()" style="font-size:0.7rem;padding:2px 8px;">Clear history</button>
   </div>
-  <canvas id="historyChart" height="80" style="display:none;"></canvas>
-  <div id="historyEmpty" style="text-align:center;color:var(--muted);font-size:0.8rem;padding:20px;">Abri el dashboard cada dia para ver la evolucion aqui.</div>
+  <canvas id="historyChart" height="80" class="private" style="display:none;"></canvas>
+  <div id="historyEmpty" class="private" style="text-align:center;color:var(--muted);font-size:0.8rem;padding:20px;">Open the dashboard each day to build your evolution chart.</div>
 </div>
 
 <div class="tpanel">
@@ -234,14 +233,13 @@ var hidden=false, isLight=false;
 function toggleHide(){
   hidden=!hidden;
   document.body.classList.toggle('hidden-mode',hidden);
-  document.getElementById('eyeBtn').textContent=hidden?'Oculto':'Mostrar';
+  document.getElementById('eyeBtn').textContent=hidden?'🙈 Hidden':'👁 Show';
   document.getElementById('eyeBtn').classList.toggle('active',hidden);
 }
 function toggleTheme(){
   isLight=!isLight;
   document.body.classList.toggle('light',isLight);
-  document.getElementById('themeBtn').textContent=isLight?'Dark':'Light';
-  localStorage.setItem('theme',isLight?'light':'dark');
+  document.getElementById('themeBtn').textContent=isLight?'🌙 Dark':'☀️ Light';
 }
 
 // EXPORT
@@ -389,7 +387,7 @@ function renderCards(){
   var spEl=document.getElementById('c-spnl');
   spEl.textContent=(spnl>=0?'+':'')+fmt(spnl);
   spEl.className='card-value private '+(spnl>=0?'pos-text':'neg-text');
-  document.getElementById('c-spnl-sub').textContent='Invested '+fmt(stakingInv())+' Now '+fmt(stakingCur());
+  document.getElementById('c-spnl-sub').textContent='Invested '+fmt(stakingInv())+' - Now '+fmt(stakingCur());
   document.getElementById('c-loans').textContent=fmt(loans);
   document.getElementById('donut-center-val').textContent=fmt(tot);
 }
@@ -548,7 +546,7 @@ function fetchPrices(){
 
 function init(){
   loadState();
-  if(localStorage.getItem('theme')==='light'){isLight=true;document.body.classList.add('light');document.getElementById('themeBtn').textContent='Dark';}
+  if(localStorage.getItem('theme')==='light'){isLight=true;document.body.classList.add('light');document.getElementById('themeBtn').textContent='🌙 Dark';}
   initCharts();
   renderHistory();
   fetchPrices().then(function(){
