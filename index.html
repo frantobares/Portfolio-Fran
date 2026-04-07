@@ -165,8 +165,13 @@ const S = {
     {sym:'ADA', name:'ADA', units:1384.15, price:0.25,  borrowed:0, bg:'#001a2a', col:'#38bdf8'}
   ],
   other: [
-    {sym:'REV', name:'Revolut',    sub:'BNB · ETH · BTC',    val:2015, bg:'#1e3a5f', col:'#38bdf8', manual:true},
-    {sym:'GAI', name:'Gaming / AI',sub:'Coinspot · 15 tokens',val:0,    bg:'#2a2a1a', col:'#fbbf24', isGaming:true}
+    {sym:'REV', name:'Revolut', sub:'BNB · ETH · BTC', val:0, bg:'#1e3a5f', col:'#38bdf8', isRevolut:true},
+    {sym:'GAI', name:'Gaming / AI',sub:'Coinspot · 15 tokens',val:0, bg:'#2a2a1a', col:'#fbbf24', isGaming:true}
+  ],
+  revolut: [
+    {sym:'BNB', units:1.35,   price:0},
+    {sym:'ETH', units:0.38,   price:0},
+    {sym:'BTC', units:0.0061, price:0}
   ],
   gaming: [
     {sym:'TON',    units:172.08729252,  price:0, audBal:312.54},
@@ -440,7 +445,7 @@ function refresh(){
 // LIVE PRICES
 async function fetchPrices(){
   const audUsd = 0.6943;
-  const cbSyms = ['BTC','ETH','ADA','POL'];
+  const cbSyms = ['BTC','ETH','ADA','POL','BNB'];
   const cbPrices = {};
   await Promise.allSettled(cbSyms.map(sym=>
     fetch('https://api.coinbase.com/v2/prices/'+sym+'-USD/spot')
@@ -459,8 +464,15 @@ async function fetchPrices(){
   ));
 
   const p = sym => cbPrices[sym]||binPrices[sym]||null;
+
   S.aave.forEach(h=>{ const px=h.sym==='WBTC'?p('BTC'):p(h.sym); if(px) h.price=px; });
   S.ledger.forEach(h=>{ if(p(h.sym)) h.price=p(h.sym); });
+
+  // Revolut: BTC, ETH, BNB desde Coinbase
+  S.revolut = S.revolut || [{sym:'BNB',units:1.35,price:0},{sym:'ETH',units:0.38,price:0},{sym:'BTC',units:0.0061,price:0}];
+  S.revolut.forEach(r=>{ if(p(r.sym)) r.price=p(r.sym); });
+  const rev = S.other.find(o=>o.isRevolut);
+  if(rev) rev.val = S.revolut.reduce((s,r)=>s+r.units*r.price, 0);
 
   let gt=0;
   S.gaming.forEach(g=>{ const px=p(g.sym); if(px){g.price=px;gt+=g.units*px;}else{gt+=g.audBal*audUsd;} });
