@@ -428,9 +428,30 @@ function renderOther(){
     const d=document.createElement('div'); d.className='h-item';
     const rDiv=document.createElement('div'); rDiv.className='h-right';
     const vSp=document.createElement('span'); vSp.className='h-val';
-    if(o.manual){ makeEditable(vSp,()=>S.other[i].val,v=>{S.other[i].val=v;},v=>fmt(v,2)); }
-    else{ vSp.textContent=fmt(o.val||0,2); vSp.title='auto'; }
+    if(o.manual){
+      makeEditable(vSp,()=>S.other[i].val,v=>{S.other[i].val=v;},v=>fmt(v,2));
+    } else {
+      vSp.textContent=fmt(o.val||0,2); vSp.title='⟳ auto';
+    }
     rDiv.appendChild(vSp);
+
+    // Si es Revolut, mostrar unidades editables por token
+    if(o.isRevolut && S.revolut){
+      const uRow=document.createElement('div');
+      uRow.style.cssText='font-size:0.72rem;color:var(--muted);margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;';
+      S.revolut.forEach((r,ri)=>{
+        const uSp=document.createElement('span');
+        makeEditable(uSp,()=>S.revolut[ri].units,v=>{
+          S.revolut[ri].units=v;
+          const rev=S.other.find(x=>x.isRevolut);
+          if(rev) rev.val=S.revolut.reduce((s,r)=>s+r.units*r.price,0);
+          saveState(); updateTimestamp(); refresh();
+        },v=>v+' '+r.sym);
+        uRow.appendChild(uSp);
+      });
+      rDiv.insertAdjacentElement('beforebegin', uRow);
+    }
+
     d.innerHTML='<div class="h-left"><div class="h-icon" style="background:'+o.bg+';color:'+o.col+'">'+o.sym+'</div><div><div class="h-name">'+o.name+'</div><div class="h-units">'+o.sub+'</div></div></div>';
     d.appendChild(rDiv); list.appendChild(d);
   });
@@ -455,15 +476,22 @@ async function fetchPrices(){
   cbPrices['WBTC'] = cbPrices['BTC'];
   cbPrices['USDC'] = 1;
 
-  const binanceSyms = {TON:'TONUSDT',AVAX:'AVAXUSDT',RNDR:'RNDRUSDT',SUPER:'SUPERUSDT',LINK:'LINKUSDT',BEAM:'BEAMUSDT',IMX:'IMXUSDT',SUI:'SUIUSDT',INJ:'INJUSDT',PRIME:'PRIMEUSDT',OP:'OPUSDT',PAAL:'PAALUSDT',NAKA:'NAKAUSDT',SFUND:'SFUNDUSDT',ANYONE:'ANYONEUSDT'};
-  const binPrices = {};
-  await Promise.allSettled(Object.entries(binanceSyms).map(([sym,pair])=>
-    fetch('https://api.binance.com/api/v3/ticker/price?symbol='+pair)
-      .then(r=>r.json())
-      .then(d=>{ if(d.price) binPrices[sym]=parseFloat(d.price); })
-  ));
+  const binanceSyms = {TON:'TONUSDT',AVAX:'AVAXUSDT',RNDR:'RNDRUSDT',SUPER:'SUPERUSDT',LINK:'LINKUSDT',BEAM:'BEAMUSDT',IMX:'IMXUSDT',SUI:'SUIUSDT',INJ:'INJUSDT',PRIME:'PRIMEUSDT',OP:'OPUSDT'};
+  const mexcSyms   = {PAAL:'PAALUSDT',NAKA:'NAKAUSDT',SFUND:'SFUNDUSDT',ANYONE:'ANYONEUSDT'};
+  const binPrices = {}, mexcPrices = {};
 
-  const p = sym => cbPrices[sym]||binPrices[sym]||null;
+  await Promise.allSettled([
+    ...Object.entries(binanceSyms).map(([sym,pair])=>
+      fetch('https://api.binance.com/api/v3/ticker/price?symbol='+pair)
+        .then(r=>r.json()).then(d=>{ if(d.price) binPrices[sym]=parseFloat(d.price); })
+    ),
+    ...Object.entries(mexcSyms).map(([sym,pair])=>
+      fetch('https://api.mexc.com/api/v3/ticker/price?symbol='+pair)
+        .then(r=>r.json()).then(d=>{ if(d.price) mexcPrices[sym]=parseFloat(d.price); })
+    )
+  ]);
+
+  const p = sym => cbPrices[sym]||binPrices[sym]||mexcPrices[sym]||null;
 
   S.aave.forEach(h=>{ const px=h.sym==='WBTC'?p('BTC'):p(h.sym); if(px) h.price=px; });
   S.ledger.forEach(h=>{ if(p(h.sym)) h.price=p(h.sym); });
