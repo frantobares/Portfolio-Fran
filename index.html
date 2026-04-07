@@ -86,9 +86,9 @@ footer{text-align:center;color:var(--muted);font-size:0.7rem;margin-top:20px;}
 <header>
   <div><h1>Fran's Portfolio</h1><div class="subtitle">Click any value to edit - All amounts in USD</div></div>
   <div class="header-right">
-    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">☀️ Light</button>
-    <button class="icon-btn" id="eyeBtn" onclick="toggleHide()">👁 Show</button>
-    <button class="icon-btn" onclick="exportHTML()">Export</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">&#9728; Light</button>
+    <button class="icon-btn" id="eyeBtn" onclick="toggleHide()">&#128065; Show</button>
+    <button class="icon-btn" onclick="exportHTML()">&#128190; Export</button>
     <div class="ts-pill" id="ts">Loading...</div>
   </div>
 </header>
@@ -233,13 +233,13 @@ var hidden=false, isLight=false;
 function toggleHide(){
   hidden=!hidden;
   document.body.classList.toggle('hidden-mode',hidden);
-  document.getElementById('eyeBtn').textContent=hidden?'🙈 Hidden':'👁 Show';
+  document.getElementById('eyeBtn').textContent=hidden?'\uD83D\uDE48 Hidden':'\uD83D\uDC41 Show';
   document.getElementById('eyeBtn').classList.toggle('active',hidden);
 }
 function toggleTheme(){
   isLight=!isLight;
   document.body.classList.toggle('light',isLight);
-  document.getElementById('themeBtn').textContent=isLight?'🌙 Dark':'☀️ Light';
+  document.getElementById('themeBtn').textContent=isLight?'\uD83C\uDF19 Dark':'\u2600 Light';
 }
 
 // EXPORT
@@ -546,7 +546,7 @@ function fetchPrices(){
 
 function init(){
   loadState();
-  if(localStorage.getItem('theme')==='light'){isLight=true;document.body.classList.add('light');document.getElementById('themeBtn').textContent='🌙 Dark';}
+  if(localStorage.getItem('theme')==='light'){isLight=true;document.body.classList.add('light');document.getElementById('themeBtn').textContent='\uD83C\uDF19 Dark';}
   initCharts();
   renderHistory();
   fetchPrices().then(function(){
