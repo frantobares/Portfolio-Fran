@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portafolio Fran</title>
+<title>Fran's Portfolio</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3250;--text:#e8eaf6;--muted:#7b82a8;--green:#22c55e;--red:#ef4444;--accent:#6366f1;--accent2:#a78bfa;--gold:#f59e0b;--blue:#38bdf8;--input-bg:#2e3250;--radius:12px;}
@@ -93,14 +93,12 @@ footer{text-align:center;color:var(--muted);font-size:0.7rem;margin-top:20px;}
   </div>
 </header>
 <div class="hint"><span>Click any number to edit it</span></div>
-
 <div class="cards">
   <div class="card c-total"><div class="card-label">Total Portfolio</div><div class="card-value private" id="c-total">-</div><div class="card-sub" id="c-total-sub">-</div></div>
   <div class="card c-crypto"><div class="card-label">Total Crypto</div><div class="card-value private" id="c-crypto">-</div><div class="card-sub">Staking + AAVE + Ledger + Revolut + Gaming</div></div>
   <div class="card c-staking"><div class="card-label">Staking P&L</div><div class="card-value private" id="c-spnl">-</div><div class="card-sub private" id="c-spnl-sub">-</div></div>
   <div class="card c-loans"><div class="card-label">Active Loans</div><div class="card-value blue-text private" id="c-loans">-</div><div class="card-sub">USDC borrowed - WBTC collateral</div></div>
 </div>
-
 <div class="charts-row">
   <div class="panel" style="display:flex;gap:20px;align-items:center;">
     <div style="flex:0 0 260px;">
@@ -118,14 +116,14 @@ footer{text-align:center;color:var(--muted);font-size:0.7rem;margin-top:20px;}
     <div class="legend private" id="barLegend" style="margin-top:12px"></div>
   </div>
 </div>
-
 <div class="bottom-row">
   <div class="panel"><div class="panel-title">AAVE Polygon - Lending</div><div class="private" id="aaveList"></div></div>
-  <div class="panel"><div class="panel-title">Ledger - Cold Wallet</div><div class="private" id="ledgerList"></div></div></div>
-<div class="bottom-row">
-  <div class="panel"><div class="panel-title">Other Positions</div><div class="private" id="otherList"></div></div>  <div class="panel" style="background:transparent;border:none;"></div>
+  <div class="panel"><div class="panel-title">Ledger - Cold Wallet</div><div class="private" id="ledgerList"></div></div>
 </div>
-
+<div class="bottom-row">
+  <div class="panel"><div class="panel-title">Other Positions</div><div class="private" id="otherList"></div></div>
+  <div class="panel" style="background:transparent;border:none;"></div>
+</div>
 <div class="tpanel">
   <div class="panel-title" style="display:flex;justify-content:space-between;align-items:center;">
     <span>Portfolio Evolution</span>
@@ -134,73 +132,68 @@ footer{text-align:center;color:var(--muted);font-size:0.7rem;margin-top:20px;}
   <canvas id="historyChart" height="80" class="private" style="display:none;"></canvas>
   <div id="historyEmpty" class="private" style="text-align:center;color:var(--muted);font-size:0.8rem;padding:20px;">Open the dashboard each day to build your evolution chart.</div>
 </div>
-
 <div class="tpanel">
   <div class="panel-title">Staking Positions</div>
   <table>
-    <thead><tr>
-      <th>Network / Token</th><th>Invested</th><th>Current</th><th>P&L</th><th>Return</th>
-    </tr></thead>
+    <thead><tr><th>Network / Token</th><th>Invested</th><th>Current</th><th>P&L</th><th>Return</th></tr></thead>
     <tbody class="private" id="stakingBody"></tbody>
     <tfoot class="private" id="stakingFoot"></tfoot>
   </table>
 </div>
-
 <footer>Data for informational purposes only - Not financial advice</footer>
-
 <script>
 var S = {
-  staking: [
-    {net:'Oasis Emerald', tok:'ROSE',               inv:1130, cur:78    },
-    {net:'Polkadot',      tok:'DOT',                inv:3300, cur:202   },
-    {net:'Binance',       tok:'BNB/XRP/CAKE/FETCH', inv:4441, cur:3280  },
-    {net:'Arbitrum',      tok:'ETH',                inv:101,  cur:689   },
-    {net:'ZKSync',        tok:'ZK',                 inv:452,  cur:158   },
-    {net:'Ronin',         tok:'RON',                inv:923,  cur:60    },
-    {net:'Base',          tok:'TOSHI',              inv:270,  cur:336   },
-    {net:'Linea',         tok:'FOXI',               inv:574,  cur:16.92 },
-    {net:'Solana',        tok:'SOL/BONK/JUP/TRUMP', inv:2156, cur:1670  }
+  staking:[
+    {net:'Oasis Emerald',tok:'ROSE',               inv:1130, cur:78    },
+    {net:'Polkadot',     tok:'DOT',                inv:3300, cur:202   },
+    {net:'Binance',      tok:'BNB/XRP/CAKE/FETCH', inv:4441, cur:3280  },
+    {net:'Arbitrum',     tok:'ETH',                inv:101,  cur:689   },
+    {net:'ZKSync',       tok:'ZK',                 inv:452,  cur:158   },
+    {net:'Ronin',        tok:'RON',                inv:923,  cur:60    },
+    {net:'Base',         tok:'TOSHI',              inv:270,  cur:336   },
+    {net:'Linea',        tok:'FOXI',               inv:574,  cur:16.92 },
+    {net:'Solana',       tok:'SOL/BONK/JUP/TRUMP', inv:2156, cur:1670  }
   ],
-  aave: [
-    {sym:'WBTC', name:'WBTC',     units:0.1068, price:69200, borrowed:4553, bg:'#2a1a00', col:'#fb923c'},
-    {sym:'USDC', name:'USDC',     units:1041,   price:1,     borrowed:0,    bg:'#002a1a', col:'#22c55e'},
-    {sym:'POL',  name:'MATIC/POL',units:3800,   price:0.09,  borrowed:0,    bg:'#1a0a2e', col:'#a78bfa'}
+  aave:[
+    {sym:'WBTC',name:'WBTC',     units:0.1068, price:69200,borrowed:4553,bg:'#2a1a00',col:'#fb923c'},
+    {sym:'USDC',name:'USDC',     units:1041,   price:1,    borrowed:0,   bg:'#002a1a',col:'#22c55e'},
+    {sym:'POL', name:'MATIC/POL',units:3800,   price:0.09, borrowed:0,   bg:'#1a0a2e',col:'#a78bfa'}
   ],
-  ledger: [
-    {sym:'ETH', name:'ETH', units:6.82348, price:2110,  borrowed:0, bg:'#1a1a3a', col:'#6366f1'},
-    {sym:'BTC', name:'BTC', units:0.1556,  price:69200, borrowed:0, bg:'#2a1f00', col:'#f59e0b'},
-    {sym:'ADA', name:'ADA', units:1384.15, price:0.25,  borrowed:0, bg:'#001a2a', col:'#38bdf8'}
+  ledger:[
+    {sym:'ETH',name:'ETH',units:6.82348,price:2110, borrowed:0,bg:'#1a1a3a',col:'#6366f1'},
+    {sym:'BTC',name:'BTC',units:0.1556, price:69200,borrowed:0,bg:'#2a1f00',col:'#f59e0b'},
+    {sym:'ADA',name:'ADA',units:1384.15,price:0.25, borrowed:0,bg:'#001a2a',col:'#38bdf8'}
   ],
-  revolut: [
-    {sym:'BNB', units:1.35,   price:0},
-    {sym:'ETH', units:0.38,   price:0},
-    {sym:'BTC', units:0.0061, price:0}
+  revolut:[
+    {sym:'BNB',units:1.35,  price:0},
+    {sym:'ETH',units:0.38,  price:0},
+    {sym:'BTC',units:0.0061,price:0}
   ],
-  other: [
-    {sym:'REV', name:'Revolut',    sub:'BNB - ETH - BTC',     val:0, bg:'#1e3a5f', col:'#38bdf8', isRevolut:true},
-    {sym:'GAI', name:'Gaming / AI',sub:'Coinspot - 15 tokens', val:0, bg:'#2a2a1a', col:'#fbbf24', isGaming:true}
+  other:[
+    {sym:'REV',name:'Revolut',    sub:'BNB - ETH - BTC',    val:0,bg:'#1e3a5f',col:'#38bdf8',isRevolut:true},
+    {sym:'GAI',name:'Gaming / AI',sub:'Coinspot - 15 tokens',val:0,bg:'#2a2a1a',col:'#fbbf24',isGaming:true}
   ],
-  gaming: [
-    {sym:'TON',    units:172.08729252,  price:0, audBal:312.54},
-    {sym:'AVAX',   units:22.39564154,   price:0, audBal:284.73},
-    {sym:'RNDR',   units:83.2293704,    price:0, audBal:233.19},
-    {sym:'SUPER',  units:1151.85010665, price:0, audBal:201.16},
-    {sym:'LINK',   units:11.12412307,   price:0, audBal:142.09},
-    {sym:'BEAM',   units:49602.2793022, price:0, audBal:128.11},
-    {sym:'IMX',    units:568.27474152,  price:0, audBal:113.46},
-    {sym:'PAAL',   units:4859.3812031,  price:0, audBal:93.90},
-    {sym:'SUI',    units:58.14629608,   price:0, audBal:74.66},
-    {sym:'NAKA',   units:759.18198609,  price:0, audBal:66.11},
-    {sym:'ANYONE', units:522.78316782,  price:0, audBal:65.07},
-    {sym:'INJ',    units:14.34241012,   price:0, audBal:59.73},
-    {sym:'PRIME',  units:87.25890356,   price:0, audBal:39.86},
-    {sym:'OP',     units:224.20356734,  price:0, audBal:36.10},
-    {sym:'SFUND',  units:439.42463786,  price:0, audBal:16.16}
+  gaming:[
+    {sym:'TON',   units:172.08729252, price:0,audBal:312.54},
+    {sym:'AVAX',  units:22.39564154,  price:0,audBal:284.73},
+    {sym:'RNDR',  units:83.2293704,   price:0,audBal:233.19},
+    {sym:'SUPER', units:1151.85010665,price:0,audBal:201.16},
+    {sym:'LINK',  units:11.12412307,  price:0,audBal:142.09},
+    {sym:'BEAM',  units:49602.2793022,price:0,audBal:128.11},
+    {sym:'IMX',   units:568.27474152, price:0,audBal:113.46},
+    {sym:'PAAL',  units:4859.3812031, price:0,audBal:93.90},
+    {sym:'SUI',   units:58.14629608,  price:0,audBal:74.66},
+    {sym:'NAKA',  units:759.18198609, price:0,audBal:66.11},
+    {sym:'ANYONE',units:522.78316782, price:0,audBal:65.07},
+    {sym:'INJ',   units:14.34241012,  price:0,audBal:59.73},
+    {sym:'PRIME', units:87.25890356,  price:0,audBal:39.86},
+    {sym:'OP',    units:224.20356734, price:0,audBal:36.10},
+    {sym:'SFUND', units:439.42463786, price:0,audBal:16.16}
   ],
-  alloc: [
-    {label:'Closing Bells', val:30400, color:'#6366f1', manual:true},
-    {label:'Criptomonedas', color:'#f59e0b', auto:true},
-    {label:'Liquidez',      val:11115, color:'#38bdf8', manual:true}
+  alloc:[
+    {label:'Closing Bells',val:30400,color:'#6366f1',manual:true},
+    {label:'Criptomonedas',color:'#f59e0b',auto:true},
+    {label:'Liquidez',     val:11115,color:'#38bdf8',manual:true}
   ]
 };
 
@@ -228,8 +221,7 @@ function ethVal(){
 }
 function altsVal(){return Math.max(0,cryptoAuto()-btcVal()-ethVal());}
 
-// HIDE/SHOW
-var hidden=false, isLight=false;
+var hidden=false,isLight=false;
 function toggleHide(){
   hidden=!hidden;
   document.body.classList.toggle('hidden-mode',hidden);
@@ -240,19 +232,16 @@ function toggleTheme(){
   isLight=!isLight;
   document.body.classList.toggle('light',isLight);
   document.getElementById('themeBtn').textContent=isLight?'\uD83C\uDF19 Dark':'\u2600 Light';
+  localStorage.setItem('theme',isLight?'light':'dark');
 }
-
-// EXPORT
 function exportHTML(){
   var html=document.documentElement.outerHTML;
   var a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
-  a.download='portafolio_fran_'+new Date().toISOString().slice(0,10)+'.html';
-  a.click();
-  URL.revokeObjectURL(a.href);
+  a.download='portfolio_fran_'+new Date().toISOString().slice(0,10)+'.html';
+  a.click();URL.revokeObjectURL(a.href);
 }
 
-// PERSISTENCE
 var SAVE_KEY='portafolio_fran_v1';
 var HISTORY_KEY='portafolio_fran_history';
 function saveState(){
@@ -276,8 +265,6 @@ function loadState(){
     if(snap.alloc)snap.alloc.forEach(function(a,i){if(S.alloc[i]&&S.alloc[i].manual)S.alloc[i].val=a.val;});
   }catch(e){console.warn('loadState error',e);}
 }
-
-// HISTORY
 function saveSnapshot(){
   var today=new Date().toISOString().slice(0,10);
   var history={};
@@ -296,47 +283,21 @@ function renderHistory(){
   var empty=document.getElementById('historyEmpty');
   if(values.length===0){canvas.style.display='none';empty.style.display='block';return;}
   canvas.style.display='block';empty.style.display='none';
-  if(window._historyChart)window._historyChart.destroy();
+  if(window._hChart)window._hChart.destroy();
   var mn=Math.min.apply(null,values)*0.97;
   var mx=Math.max.apply(null,values)*1.03;
-  window._historyChart=new Chart(canvas.getContext('2d'),{
+  window._hChart=new Chart(canvas.getContext('2d'),{
     type:'line',
-    data:{
-      labels:labels,
-      datasets:[{
-        data:values,
-        borderColor:'#6366f1',
-        backgroundColor:'rgba(99,102,241,0.08)',
-        borderWidth:2.5,
-        pointRadius:values.length>30?0:4,
-        pointHoverRadius:6,
-        pointBackgroundColor:'#6366f1',
-        fill:true,
-        tension:0.3
-      }]
-    },
-    options:{
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ' '+fmt(ctx.parsed.y);}}}},
-      scales:{
-        x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',maxTicksLimit:10}},
-        y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}},min:mn,max:mx}
-      },
-      animation:{duration:400}
-    }
+    data:{labels:labels,datasets:[{data:values,borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.08)',borderWidth:2.5,pointRadius:values.length>30?0:4,pointHoverRadius:6,pointBackgroundColor:'#6366f1',fill:true,tension:0.3}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ' '+fmt(ctx.parsed.y);}}}},scales:{x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',maxTicksLimit:10}},y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}},min:mn,max:mx}},animation:{duration:400}}
   });
 }
 function clearHistory(){
-  if(confirm('Borrar todo el historial de evolucion?')){
-    localStorage.removeItem(HISTORY_KEY);
-    renderHistory();
-  }
+  if(confirm('Clear all portfolio history?')){localStorage.removeItem(HISTORY_KEY);renderHistory();}
 }
 
-// EDITABLE
 function makeEditable(el,getter,setter,fmtFn){
-  el.classList.add('editable');
-  el.title='Click to edit';
-  el.textContent=fmtFn(getter());
+  el.classList.add('editable');el.title='Click to edit';el.textContent=fmtFn(getter());
   el.addEventListener('click',function(e){
     e.stopPropagation();
     if(el.querySelector('.edit-input'))return;
@@ -354,7 +315,6 @@ function makeEditable(el,getter,setter,fmtFn){
   });
 }
 
-// CHARTS
 var donutChart,barChart;
 function initCharts(){
   donutChart=new Chart(document.getElementById('donutChart').getContext('2d'),{
@@ -365,20 +325,15 @@ function initCharts(){
   barChart=new Chart(document.getElementById('barChart').getContext('2d'),{
     type:'bar',
     data:{labels:['BTC','ETH','ALTs'],datasets:[{data:[btcVal(),ethVal(),altsVal()],backgroundColor:['#f59e0b','#6366f1','#22c55e'],borderRadius:8,borderSkipped:false}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ' '+fmt(ctx.parsed.y);}}}},
-      scales:{x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8'}},y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}}}},
-      animation:{duration:400}}
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ' '+fmt(ctx.parsed.y);}}}},scales:{x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8'}},y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}}}},animation:{duration:400}}
   });
 }
 function updateCharts(){
-  donutChart.data.datasets[0].data=S.alloc.map(function(a){return allocVal(a);}); donutChart.update();
-  barChart.data.datasets[0].data=[btcVal(),ethVal(),altsVal()]; barChart.update();
+  donutChart.data.datasets[0].data=S.alloc.map(function(a){return allocVal(a);});donutChart.update();
+  barChart.data.datasets[0].data=[btcVal(),ethVal(),altsVal()];barChart.update();
 }
 
-// RENDER
-function updateTimestamp(){
-  document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}
+function updateTimestamp(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 function renderCards(){
   var tot=allocTotal(),cry=cryptoAuto(),spnl=stakingCur()-stakingInv(),loans=totalBorrowed();
   document.getElementById('c-total').textContent=fmt(tot);
@@ -399,7 +354,7 @@ function renderStaking(){
     tr.innerHTML='<td><div class="net">'+s.net+'</div><span class="tok">'+s.tok+'</span></td>';
     ['inv','cur'].forEach(function(k){
       var td=document.createElement('td'),sp=document.createElement('span');
-      makeEditable(sp,function(){return S.staking[ri][k];},function(v){S.staking[ri][k]=v;},function(v){return fmt(v,2);});
+      (function(i,key){makeEditable(sp,function(){return S.staking[i][key];},function(v){S.staking[i][key]=v;},function(v){return fmt(v,2);});})(ri,k);
       td.appendChild(sp);tr.appendChild(td);
     });
     var pnl=s.cur-s.inv;
@@ -410,11 +365,7 @@ function renderStaking(){
     tr.appendChild(tdR);body.appendChild(tr);
   });
   var tInv=stakingInv(),tCur=stakingCur(),tPnl=tCur-tInv;
-  document.getElementById('stakingFoot').innerHTML=
-    '<tr><td style="color:var(--muted);font-size:0.74rem;text-transform:uppercase;letter-spacing:.07em;">Total</td>'
-    +'<td>'+fmt(tInv)+'</td><td>'+fmt(tCur)+'</td>'
-    +'<td class="'+(tPnl>=0?'pnl-pos':'pnl-neg')+'">'+(tPnl>=0?'+':'')+fmt(tPnl)+'</td>'
-    +'<td class="'+(tPnl>=0?'pnl-pos':'pnl-neg')+'">'+((tCur-tInv)/tInv*100).toFixed(1)+'%</td></tr>';
+  document.getElementById('stakingFoot').innerHTML='<tr><td style="color:var(--muted);font-size:0.74rem;text-transform:uppercase;letter-spacing:.07em;">Total</td><td>'+fmt(tInv)+'</td><td>'+fmt(tCur)+'</td><td class="'+(tPnl>=0?'pnl-pos':'pnl-neg')+'">'+(tPnl>=0?'+':'')+fmt(tPnl)+'</td><td class="'+(tPnl>=0?'pnl-pos':'pnl-neg')+'">'+((tCur-tInv)/tInv*100).toFixed(1)+'%</td></tr>';
 }
 function renderDonutLegend(){
   var leg=document.getElementById('donutLegend');leg.innerHTML='';
@@ -429,7 +380,7 @@ function renderDonutLegend(){
       row.appendChild(sp);
     }else{
       var sp2=document.createElement('span');sp2.className='leg-val';
-      makeEditable(sp2,function(){return S.alloc[i].val;},function(v){S.alloc[i].val=v;},function(v){return fmt(v,2);});
+      (function(i2){makeEditable(sp2,function(){return S.alloc[i2].val;},function(v){S.alloc[i2].val=v;},function(v){return fmt(v,2);});})(i);
       row.innerHTML='<div class="leg-dot" style="background:'+a.color+'"></div><div class="leg-name">'+a.label+'</div>';
       row.appendChild(sp2);
     }
@@ -455,22 +406,17 @@ function renderHoldingGroup(arr,containerId){
     var d=document.createElement('div');d.className='h-item';
     var rDiv=document.createElement('div');rDiv.className='h-right';
     var vSp=document.createElement('span');vSp.className='h-val';
-    vSp.id='hval-'+containerId+'-'+i;
-    vSp.textContent=fmt(holdingVal(h),1);
+    vSp.id='hval-'+containerId+'-'+i;vSp.textContent=fmt(holdingVal(h),1);
     rDiv.appendChild(vSp);
     if(h.borrowed>0){
       var bSp=document.createElement('span');bSp.className='h-borrow';
-      makeEditable(bSp,function(){return arr[i].borrowed;},function(v){arr[i].borrowed=v;},function(v){return '-'+fmt(v)+' borrowed';});
+      (function(i2){makeEditable(bSp,function(){return arr[i2].borrowed;},function(v){arr[i2].borrowed=v;},function(v){return '-'+fmt(v)+' borrowed';});})(i);
       rDiv.appendChild(bSp);
     }
-    var uRow=document.createElement('div');
-    uRow.style.cssText='font-size:0.72rem;color:var(--muted);margin-top:2px;display:flex;gap:6px;align-items:center;';
+    var uRow=document.createElement('div');uRow.style.cssText='font-size:0.72rem;color:var(--muted);margin-top:2px;display:flex;gap:6px;align-items:center;';
     var uSp=document.createElement('span');
-    (function(idx){
-      makeEditable(uSp,function(){return arr[idx].units;},function(v){arr[idx].units=v;document.getElementById('hval-'+containerId+'-'+idx).textContent=fmt(holdingVal(arr[idx]),1);},function(v){return v+' '+h.sym;});
-    })(i);
-    var pBadge=document.createElement('span');
-    pBadge.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:0.65rem;';
+    (function(i2){makeEditable(uSp,function(){return arr[i2].units;},function(v){arr[i2].units=v;document.getElementById('hval-'+containerId+'-'+i2).textContent=fmt(holdingVal(arr[i2]),1);},function(v){return v+' '+h.sym;});})(i);
+    var pBadge=document.createElement('span');pBadge.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:0.65rem;';
     pBadge.textContent='@ '+fmt(h.price,2);
     uRow.appendChild(uSp);uRow.appendChild(pBadge);
     d.innerHTML='<div class="h-left"><div class="h-icon" style="background:'+h.bg+';color:'+h.col+'">'+h.sym+'</div><div><div class="h-name">'+h.name+'</div></div></div>';
@@ -484,7 +430,7 @@ function renderOther(){
     var d=document.createElement('div');d.className='h-item';
     var rDiv=document.createElement('div');rDiv.className='h-right';
     var vSp=document.createElement('span');vSp.className='h-val';
-    if(o.manual){makeEditable(vSp,function(){return S.other[i].val;},function(v){S.other[i].val=v;},function(v){return fmt(v,2);});}
+    if(o.manual){(function(i2){makeEditable(vSp,function(){return S.other[i2].val;},function(v){S.other[i2].val=v;},function(v){return fmt(v,2);});})(i);}
     else{vSp.textContent=fmt(o.val||0,2);vSp.title='auto';}
     rDiv.appendChild(vSp);
     d.innerHTML='<div class="h-left"><div class="h-icon" style="background:'+o.bg+';color:'+o.col+'">'+o.sym+'</div><div><div class="h-name">'+o.name+'</div><div class="h-units">'+o.sub+'</div></div></div>';
@@ -497,46 +443,35 @@ function refresh(){
   renderOther();updateCharts();
 }
 
-// LIVE PRICES
 function fetchPrices(){
   var audUsd=0.6943;
+  var cbPrices={},binPrices={},dexPrices={};
   var cbSyms=['BTC','ETH','ADA','POL','BNB'];
-  var cbPrices={};
   var binanceSyms={TON:'TONUSDT',AVAX:'AVAXUSDT',RNDR:'RNDRUSDT',SUPER:'SUPERUSDT',LINK:'LINKUSDT',BEAM:'BEAMUSDT',IMX:'IMXUSDT',SUI:'SUIUSDT',INJ:'INJUSDT',PRIME:'PRIMEUSDT',OP:'OPUSDT'};
-  var mexcSyms={PAAL:'PAALUSDT',NAKA:'NAKAUSDT',SFUND:'SFUNDUSDT',ANYONE:'ANYONEUSDT'};
-  var binPrices={},mexcPrices={};
-
+  var dexContracts={PAAL:'0x14fee680690900ba0cccfc76ad70fd1b95d10e16',NAKA:'0x311434160d7537be358930def317afb606c0d737',ANYONE:'0xfeac2eae96899709a43e252b6b92971d32f9c0f9',SFUND:'0x477bc8d23c634c154061869478bce96be6045d12'};
   var cbFetches=cbSyms.map(function(sym){
-    return fetch('https://api.coinbase.com/v2/prices/'+sym+'-USD/spot')
-      .then(function(r){return r.json();})
-      .then(function(d){if(d.data&&d.data.amount)cbPrices[sym]=parseFloat(d.data.amount);})
-      .catch(function(){});
+    return fetch('https://api.coinbase.com/v2/prices/'+sym+'-USD/spot').then(function(r){return r.json();}).then(function(d){if(d.data&&d.data.amount)cbPrices[sym]=parseFloat(d.data.amount);}).catch(function(){});
   });
   var binFetches=Object.keys(binanceSyms).map(function(sym){
-    return fetch('https://api.binance.com/api/v3/ticker/price?symbol='+binanceSyms[sym])
-      .then(function(r){return r.json();})
-      .then(function(d){if(d.price)binPrices[sym]=parseFloat(d.price);})
-      .catch(function(){});
+    return fetch('https://api.binance.com/api/v3/ticker/price?symbol='+binanceSyms[sym]).then(function(r){return r.json();}).then(function(d){if(d.price)binPrices[sym]=parseFloat(d.price);}).catch(function(){});
   });
-  var mexcFetches=Object.keys(mexcSyms).map(function(sym){
-    return fetch('https://api.mexc.com/api/v3/ticker/price?symbol='+mexcSyms[sym])
-      .then(function(r){return r.json();})
-      .then(function(d){if(d.price)mexcPrices[sym]=parseFloat(d.price);})
-      .catch(function(){});
+  var dexFetches=Object.keys(dexContracts).map(function(sym){
+    return fetch('https://api.dexscreener.com/latest/dex/tokens/'+dexContracts[sym]).then(function(r){return r.json();}).then(function(d){
+      if(d.pairs&&d.pairs.length>0){
+        var pair=d.pairs.find(function(p){return p.quoteToken.symbol==='USDT'||p.quoteToken.symbol==='USDC';});
+        if(!pair)pair=d.pairs[0];
+        if(pair&&pair.priceUsd)dexPrices[sym]=parseFloat(pair.priceUsd);
+      }
+    }).catch(function(){});
   });
-
-  return Promise.all(cbFetches.concat(binFetches).concat(mexcFetches)).then(function(){
-    cbPrices['WBTC']=cbPrices['BTC'];
-    cbPrices['USDC']=1;
-    function p(sym){return cbPrices[sym]||binPrices[sym]||mexcPrices[sym]||null;}
-
+  return Promise.all(cbFetches.concat(binFetches).concat(dexFetches)).then(function(){
+    cbPrices['WBTC']=cbPrices['BTC'];cbPrices['USDC']=1;
+    function p(sym){return cbPrices[sym]||binPrices[sym]||dexPrices[sym]||null;}
     S.aave.forEach(function(h){var px=h.sym==='WBTC'?p('BTC'):p(h.sym);if(px)h.price=px;});
     S.ledger.forEach(function(h){if(p(h.sym))h.price=p(h.sym);});
-
     S.revolut.forEach(function(r){if(p(r.sym))r.price=p(r.sym);});
     var rev=S.other.filter(function(o){return o.isRevolut;})[0];
     if(rev)rev.val=S.revolut.reduce(function(s,r){return s+r.units*r.price;},0);
-
     var gt=0;
     S.gaming.forEach(function(g){var px=p(g.sym);if(px){g.price=px;gt+=g.units*px;}else{gt+=g.audBal*audUsd;}});
     var gai=S.other.filter(function(o){return o.isGaming;})[0];
@@ -549,11 +484,7 @@ function init(){
   if(localStorage.getItem('theme')==='light'){isLight=true;document.body.classList.add('light');document.getElementById('themeBtn').textContent='\uD83C\uDF19 Dark';}
   initCharts();
   renderHistory();
-  fetchPrices().then(function(){
-    refresh();
-    saveSnapshot();
-    updateTimestamp();
-  });
+  fetchPrices().then(function(){refresh();saveSnapshot();updateTimestamp();});
 }
 init();
 </script>
