@@ -20,8 +20,7 @@ h1{font-size:1.6rem;font-weight:800;}
 .icon-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 body.hidden-mode .private{filter:blur(6px);user-select:none;pointer-events:none;}
 body.hidden-mode .editable{pointer-events:none;}
-body.hidden-mode #barChart{filter:blur(6px);}
-body.hidden-mode #historyChart{filter:blur(6px);}
+body.hidden-mode #barChart,body.hidden-mode #historyChart{filter:blur(6px);}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
@@ -56,11 +55,8 @@ body.hidden-mode #historyChart{filter:blur(6px);}
 .h-item:last-child{border-bottom:none;}
 .h-left{display:flex;align-items:center;gap:10px;}
 .h-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;flex-shrink:0;}
-.h-name{font-weight:700;font-size:0.88rem;}
-.h-units{font-size:0.74rem;color:var(--muted);margin-top:1px;}
-.h-right{text-align:right;}
-.h-val{font-weight:700;font-size:0.88rem;}
-.h-borrow{font-size:0.74rem;color:var(--red);}
+.h-name{font-weight:700;font-size:0.88rem;}.h-units{font-size:0.74rem;color:var(--muted);margin-top:1px;}
+.h-right{text-align:right;}.h-val{font-weight:700;font-size:0.88rem;}.h-borrow{font-size:0.74rem;color:var(--red);}
 .tpanel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:0.88rem;}
 thead th{color:var(--muted);font-size:0.74rem;text-transform:uppercase;letter-spacing:.07em;font-weight:700;padding:0 10px 10px;text-align:right;white-space:nowrap;}
@@ -69,12 +65,9 @@ tbody tr{border-top:1px solid var(--border);transition:background .15s;}
 tbody tr:hover{background:var(--surface2);}
 td,tfoot td{padding:10px;text-align:right;}
 td:first-child,tfoot td:first-child{text-align:left;}
-tfoot tr{border-top:2px solid var(--border);}
-tfoot td{font-weight:700;}
-.net{font-weight:700;}
-.tok{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:0.65rem;color:var(--muted);margin-top:2px;}
-.pnl-pos{color:var(--green);font-weight:700;}
-.pnl-neg{color:var(--red);font-weight:700;}
+tfoot tr{border-top:2px solid var(--border);}tfoot td{font-weight:700;}
+.net{font-weight:700;}.tok{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:0.65rem;color:var(--muted);margin-top:2px;}
+.pnl-pos{color:var(--green);font-weight:700;}.pnl-neg{color:var(--red);font-weight:700;}
 .bar-bg{width:55px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;display:inline-block;margin-left:5px;vertical-align:middle;}
 .bar-fill{height:100%;border-radius:3px;}
 .hint{text-align:center;color:var(--muted);font-size:0.8rem;margin-bottom:16px;}
@@ -142,6 +135,9 @@ footer{text-align:center;color:var(--muted);font-size:0.7rem;margin-top:20px;}
 </div>
 <footer>Data for informational purposes only - Not financial advice</footer>
 <script>
+var AUD_RATE = 0.65;
+function audToUsd(v){ return (v||0) * AUD_RATE; }
+
 var S = {
   staking:[
     {net:'Oasis Emerald',tok:'ROSE',               inv:1130, cur:78    },
@@ -155,45 +151,30 @@ var S = {
     {net:'Solana',       tok:'SOL/BONK/JUP/TRUMP', inv:2156, cur:1670  }
   ],
   aave:[
-    {sym:'WBTC',name:'WBTC',     units:0.1068, price:69200,borrowed:4553,bg:'#2a1a00',col:'#fb923c'},
-    {sym:'USDC',name:'USDC',     units:1041,   price:1,    borrowed:0,   bg:'#002a1a',col:'#22c55e'},
-    {sym:'POL', name:'MATIC/POL',units:3800,   price:0.09, borrowed:0,   bg:'#1a0a2e',col:'#a78bfa'}
+    {sym:'WBTC',name:'WBTC',     units:0.1068, price:69200, borrowed:4553, bg:'#2a1a00',col:'#fb923c'},
+    {sym:'USDC',name:'USDC',     units:1041,   price:1,     borrowed:0,    bg:'#002a1a',col:'#22c55e'},
+    {sym:'POL', name:'MATIC/POL',units:3800,   price:0.09,  borrowed:0,    bg:'#1a0a2e',col:'#a78bfa'}
   ],
   ledger:[
-    {sym:'ETH',name:'ETH',units:6.82348,price:2110, borrowed:0,bg:'#1a1a3a',col:'#6366f1'},
-    {sym:'BTC',name:'BTC',units:0.1556, price:69200,borrowed:0,bg:'#2a1f00',col:'#f59e0b'},
-    {sym:'ADA',name:'ADA',units:1384.15,price:0.25, borrowed:0,bg:'#001a2a',col:'#38bdf8'}
+    {sym:'ETH',name:'ETH',units:6.82348, price:2110,  borrowed:0, bg:'#1a1a3a',col:'#6366f1'},
+    {sym:'BTC',name:'BTC',units:0.1556,  price:69200, borrowed:0, bg:'#2a1f00',col:'#f59e0b'},
+    {sym:'ADA',name:'ADA',units:1384.15, price:0.25,  borrowed:0, bg:'#001a2a',col:'#38bdf8'}
   ],
   revolut:[
-    {sym:'BNB',units:1.35,  price:0},
-    {sym:'ETH',units:0.38,  price:0},
-    {sym:'BTC',units:0.0061,price:0}
+    {sym:'BNB',units:1.35,   price:0},
+    {sym:'ETH',units:0.38,   price:0},
+    {sym:'BTC',units:0.0061, price:0}
   ],
+  // other: val = USD value (auto or manual), audVal = AUD input for aud-based entries
   other:[
-    {sym:'REV',name:'Revolut',    sub:'BNB - ETH - BTC',    val:0,bg:'#1e3a5f',col:'#38bdf8',isRevolut:true},
-    {sym:'GAI',name:'Gaming / AI',sub:'Coinspot - 15 tokens',val:0,bg:'#2a2a1a',col:'#fbbf24',isGaming:true}
+    {sym:'REV',name:'Revolut',    sub:'BNB - ETH - BTC', val:0,    bg:'#1e3a5f',col:'#38bdf8',isRevolut:true},
+    {sym:'GAI',name:'Gaming / AI',sub:'Coinspot (AUD)',   audVal:1180, bg:'#2a2a1a',col:'#fbbf24',isAud:true}
   ],
-  gaming:[
-    {sym:'TON',   units:172.08729252, price:0,audBal:312.54},
-    {sym:'AVAX',  units:22.39564154,  price:0,audBal:284.73},
-    {sym:'RNDR',  units:83.2293704,   price:0,audBal:233.19},
-    {sym:'SUPER', units:1151.85010665,price:0,audBal:201.16},
-    {sym:'LINK',  units:11.12412307,  price:0,audBal:142.09},
-    {sym:'BEAM',  units:49602.2793022,price:0,audBal:128.11},
-    {sym:'IMX',   units:568.27474152, price:0,audBal:113.46},
-    {sym:'PAAL',  units:4859.3812031, price:0,audBal:93.90},
-    {sym:'SUI',   units:58.14629608,  price:0,audBal:74.66},
-    {sym:'NAKA',  units:759.18198609, price:0,audBal:66.11},
-    {sym:'ANYONE',units:522.78316782, price:0,audBal:65.07},
-    {sym:'INJ',   units:14.34241012,  price:0,audBal:59.73},
-    {sym:'PRIME', units:87.25890356,  price:0,audBal:39.86},
-    {sym:'OP',    units:224.20356734, price:0,audBal:36.10},
-    {sym:'SFUND', units:439.42463786, price:0,audBal:16.16}
-  ],
+  // alloc: Liquidez uses audVal too
   alloc:[
-    {label:'Closing Bells',val:30400,color:'#6366f1',manual:true},
-    {label:'Criptomonedas',color:'#f59e0b',auto:true},
-    {label:'Liquidez',     val:11115,color:'#38bdf8',manual:true}
+    {label:'Closing Bells',val:30400,  color:'#6366f1',manual:true},
+    {label:'Criptomonedas',            color:'#f59e0b',auto:true},
+    {label:'Liquidez',     audVal:16115,color:'#38bdf8',isAud:true}
   ]
 };
 
@@ -202,14 +183,24 @@ function holdingVal(h){return h.units*h.price;}
 function stakingInv(){return S.staking.reduce(function(s,r){return s+r.inv;},0);}
 function stakingCur(){return S.staking.reduce(function(s,r){return s+r.cur;},0);}
 function totalBorrowed(){return S.aave.reduce(function(s,l){return s+l.borrowed;},0);}
+
+function otherUsdVal(o){
+  if(o.isRevolut) return o.val||0;
+  if(o.isAud)     return audToUsd(o.audVal);
+  return o.val||0;
+}
 function cryptoAuto(){
   return stakingCur()
-    +S.aave.reduce(function(s,l){return s+holdingVal(l);},0)
-    +S.ledger.reduce(function(s,l){return s+holdingVal(l);},0)
-    +S.other.reduce(function(s,o){return s+(o.val||0);},0)
-    -totalBorrowed();
+    + S.aave.reduce(function(s,l){return s+holdingVal(l);},0)
+    + S.ledger.reduce(function(s,l){return s+holdingVal(l);},0)
+    + S.other.reduce(function(s,o){return s+otherUsdVal(o);},0)
+    - totalBorrowed();
 }
-function allocVal(a){return a.auto?cryptoAuto():(a.val||0);}
+function allocVal(a){
+  if(a.auto)   return cryptoAuto();
+  if(a.isAud)  return audToUsd(a.audVal);
+  return a.val||0;
+}
 function allocTotal(){return S.alloc.reduce(function(s,a){return s+allocVal(a);},0);}
 function btcVal(){
   return S.aave.filter(function(l){return l.sym==='WBTC';}).reduce(function(s,l){return s+holdingVal(l);},0)
@@ -235,22 +226,21 @@ function toggleTheme(){
   localStorage.setItem('theme',isLight?'light':'dark');
 }
 function exportHTML(){
-  var html=document.documentElement.outerHTML;
   var a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.href=URL.createObjectURL(new Blob([document.documentElement.outerHTML],{type:'text/html'}));
   a.download='portfolio_fran_'+new Date().toISOString().slice(0,10)+'.html';
   a.click();URL.revokeObjectURL(a.href);
 }
 
-var SAVE_KEY='portafolio_fran_v1';
+var SAVE_KEY='portafolio_fran_v2';
 var HISTORY_KEY='portafolio_fran_history';
 function saveState(){
   var snap={
     staking:S.staking.map(function(r){return {inv:r.inv,cur:r.cur};}),
-    aave:S.aave.map(function(h){return {units:h.units,borrowed:h.borrowed};}),
-    ledger:S.ledger.map(function(h){return {units:h.units};}),
-    other:S.other.filter(function(o){return o.manual;}).map(function(o){return {idx:S.other.indexOf(o),val:o.val};}),
-    alloc:S.alloc.map(function(a){return {val:a.val};})
+    aave:   S.aave.map(function(h){return {units:h.units,borrowed:h.borrowed};}),
+    ledger: S.ledger.map(function(h){return {units:h.units};}),
+    other:  S.other.map(function(o){return {val:o.val||0,audVal:o.audVal||0};}),
+    alloc:  S.alloc.map(function(a){return {val:a.val||0,audVal:a.audVal||0};})
   };
   localStorage.setItem(SAVE_KEY,JSON.stringify(snap));
 }
@@ -259,48 +249,46 @@ function loadState(){
     var raw=localStorage.getItem(SAVE_KEY);if(!raw)return;
     var snap=JSON.parse(raw);
     if(snap.staking)snap.staking.forEach(function(r,i){if(S.staking[i]){S.staking[i].inv=r.inv;S.staking[i].cur=r.cur;}});
-    if(snap.aave)snap.aave.forEach(function(h,i){if(S.aave[i]){S.aave[i].units=h.units;S.aave[i].borrowed=h.borrowed;}});
-    if(snap.ledger)snap.ledger.forEach(function(h,i){if(S.ledger[i])S.ledger[i].units=h.units;});
-    if(snap.other)snap.other.forEach(function(o){if(S.other[o.idx])S.other[o.idx].val=o.val;});
-    if(snap.alloc)snap.alloc.forEach(function(a,i){if(S.alloc[i]&&S.alloc[i].manual)S.alloc[i].val=a.val;});
-  }catch(e){console.warn('loadState error',e);}
+    if(snap.aave)   snap.aave.forEach(function(h,i){if(S.aave[i]){S.aave[i].units=h.units;S.aave[i].borrowed=h.borrowed;}});
+    if(snap.ledger) snap.ledger.forEach(function(h,i){if(S.ledger[i])S.ledger[i].units=h.units;});
+    if(snap.other)  snap.other.forEach(function(o,i){if(S.other[i]){S.other[i].val=o.val;S.other[i].audVal=o.audVal;}});
+    if(snap.alloc)  snap.alloc.forEach(function(a,i){if(S.alloc[i]){S.alloc[i].val=a.val;S.alloc[i].audVal=a.audVal;}});
+  }catch(e){console.warn('loadState',e);}
 }
+
 function saveSnapshot(){
   var today=new Date().toISOString().slice(0,10);
-  var history={};
-  try{history=JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');}catch(e){}
-  history[today]=Math.round(allocTotal());
-  localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
+  var h={};try{h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');}catch(e){}
+  h[today]=Math.round(allocTotal());
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(h));
   renderHistory();
 }
 function renderHistory(){
-  var history={};
-  try{history=JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');}catch(e){}
-  var sorted=Object.keys(history).sort();
+  var h={};try{h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');}catch(e){}
+  var sorted=Object.keys(h).sort();
   var labels=sorted.map(function(d){var p=d.split('-');return p[2]+'/'+p[1];});
-  var values=sorted.map(function(d){return history[d];});
+  var values=sorted.map(function(d){return h[d];});
   var canvas=document.getElementById('historyChart');
   var empty=document.getElementById('historyEmpty');
-  if(values.length===0){canvas.style.display='none';empty.style.display='block';return;}
+  if(!values.length){canvas.style.display='none';empty.style.display='block';return;}
   canvas.style.display='block';empty.style.display='none';
   if(window._hChart)window._hChart.destroy();
-  var mn=Math.min.apply(null,values)*0.97;
-  var mx=Math.max.apply(null,values)*1.03;
   window._hChart=new Chart(canvas.getContext('2d'),{
     type:'line',
     data:{labels:labels,datasets:[{data:values,borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.08)',borderWidth:2.5,pointRadius:values.length>30?0:4,pointHoverRadius:6,pointBackgroundColor:'#6366f1',fill:true,tension:0.3}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ' '+fmt(ctx.parsed.y);}}}},scales:{x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',maxTicksLimit:10}},y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}},min:mn,max:mx}},animation:{duration:400}}
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+fmt(c.parsed.y);}}}},
+      scales:{x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',maxTicksLimit:10}},
+              y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}},
+                 min:Math.min.apply(null,values)*0.97,max:Math.max.apply(null,values)*1.03}},
+      animation:{duration:400}}
   });
 }
-function clearHistory(){
-  if(confirm('Clear all portfolio history?')){localStorage.removeItem(HISTORY_KEY);renderHistory();}
-}
+function clearHistory(){if(confirm('Clear all portfolio history?')){localStorage.removeItem(HISTORY_KEY);renderHistory();}}
 
 function makeEditable(el,getter,setter,fmtFn){
   el.classList.add('editable');el.title='Click to edit';el.textContent=fmtFn(getter());
   el.addEventListener('click',function(e){
-    e.stopPropagation();
-    if(el.querySelector('.edit-input'))return;
+    e.stopPropagation();if(el.querySelector('.edit-input'))return;
     var inp=document.createElement('input');
     inp.className='edit-input';inp.type='number';inp.value=getter();
     inp.style.width=Math.max(60,String(getter()).length*10)+'px';
@@ -319,13 +307,16 @@ var donutChart,barChart;
 function initCharts(){
   donutChart=new Chart(document.getElementById('donutChart').getContext('2d'),{
     type:'doughnut',
-    data:{labels:S.alloc.map(function(a){return a.label;}),datasets:[{data:S.alloc.map(function(a){return allocVal(a);}),backgroundColor:S.alloc.map(function(a){return a.color;}),borderColor:'#0f1117',borderWidth:3,hoverOffset:6}]},
-    options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ' '+fmt(ctx.parsed)+' ('+(ctx.parsed/allocTotal()*100).toFixed(1)+'%)';}}}},animation:{duration:400}}
+    data:{labels:S.alloc.map(function(a){return a.label;}),
+          datasets:[{data:S.alloc.map(function(a){return allocVal(a);}),
+                     backgroundColor:S.alloc.map(function(a){return a.color;}),borderColor:'#0f1117',borderWidth:3,hoverOffset:6}]},
+    options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+fmt(c.parsed)+' ('+(c.parsed/allocTotal()*100).toFixed(1)+'%)';}}}},animation:{duration:400}}
   });
   barChart=new Chart(document.getElementById('barChart').getContext('2d'),{
     type:'bar',
     data:{labels:['BTC','ETH','ALTs'],datasets:[{data:[btcVal(),ethVal(),altsVal()],backgroundColor:['#f59e0b','#6366f1','#22c55e'],borderRadius:8,borderSkipped:false}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ' '+fmt(ctx.parsed.y);}}}},scales:{x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8'}},y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}}}},animation:{duration:400}}
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+fmt(c.parsed.y);}}}},
+      scales:{x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8'}},y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}}}},animation:{duration:400}}
   });
 }
 function updateCharts(){
@@ -334,6 +325,7 @@ function updateCharts(){
 }
 
 function updateTimestamp(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+
 function renderCards(){
   var tot=allocTotal(),cry=cryptoAuto(),spnl=stakingCur()-stakingInv(),loans=totalBorrowed();
   document.getElementById('c-total').textContent=fmt(tot);
@@ -346,6 +338,7 @@ function renderCards(){
   document.getElementById('c-loans').textContent=fmt(loans);
   document.getElementById('donut-center-val').textContent=fmt(tot);
 }
+
 function renderStaking(){
   var body=document.getElementById('stakingBody');body.innerHTML='';
   var maxAbs=Math.max.apply(null,S.staking.map(function(s){return Math.abs(s.cur-s.inv);}));
@@ -365,8 +358,9 @@ function renderStaking(){
     tr.appendChild(tdR);body.appendChild(tr);
   });
   var tInv=stakingInv(),tCur=stakingCur(),tPnl=tCur-tInv;
-  document.getElementById('stakingFoot').innerHTML='<tr><td style="color:var(--muted);font-size:0.74rem;text-transform:uppercase;letter-spacing:.07em;">Total</td><td>'+fmt(tInv)+'</td><td>'+fmt(tCur)+'</td><td class="'+(tPnl>=0?'pnl-pos':'pnl-neg')+'">'+(tPnl>=0?'+':'')+fmt(tPnl)+'</td><td class="'+(tPnl>=0?'pnl-pos':'pnl-neg')+'">'+((tCur-tInv)/tInv*100).toFixed(1)+'%</td></tr>';
+  document.getElementById('stakingFoot').innerHTML='<tr><td style="color:var(--muted);font-size:0.74rem;text-transform:uppercase;">Total</td><td>'+fmt(tInv)+'</td><td>'+fmt(tCur)+'</td><td class="'+(tPnl>=0?'pnl-pos':'pnl-neg')+'">'+(tPnl>=0?'+':'')+fmt(tPnl)+'</td><td class="'+(tPnl>=0?'pnl-pos':'pnl-neg')+'">'+((tCur-tInv)/tInv*100).toFixed(1)+'%</td></tr>';
 }
+
 function renderDonutLegend(){
   var leg=document.getElementById('donutLegend');leg.innerHTML='';
   var tot=allocTotal();
@@ -378,15 +372,24 @@ function renderDonutLegend(){
       var sp=document.createElement('span');sp.className='leg-val';sp.textContent=fmt(v);
       row.innerHTML='<div class="leg-dot" style="background:'+a.color+'"></div><div class="leg-name">'+a.label+' <span style="font-size:0.62rem;color:var(--muted)">auto</span></div>';
       row.appendChild(sp);
-    }else{
+    } else if(a.isAud){
+      var usdSp=document.createElement('span');usdSp.className='leg-val';usdSp.textContent=fmt(v);
+      var audSp=document.createElement('span');audSp.style.cssText='font-size:0.7rem;color:var(--muted);display:block;margin-top:1px;';
+      (function(idx){makeEditable(audSp,function(){return S.alloc[idx].audVal||0;},function(val){S.alloc[idx].audVal=val;},function(val){return 'A$'+val+' AUD';});})(i);
+      var rDiv=document.createElement('div');rDiv.className='h-right';rDiv.style.textAlign='right';
+      rDiv.appendChild(usdSp);rDiv.appendChild(audSp);
+      row.innerHTML='<div class="leg-dot" style="background:'+a.color+'"></div><div class="leg-name">'+a.label+'</div>';
+      row.appendChild(rDiv);
+    } else {
       var sp2=document.createElement('span');sp2.className='leg-val';
-      (function(i2){makeEditable(sp2,function(){return S.alloc[i2].val;},function(v){S.alloc[i2].val=v;},function(v){return fmt(v,2);});})(i);
+      (function(idx){makeEditable(sp2,function(){return S.alloc[idx].val||0;},function(val){S.alloc[idx].val=val;},function(val){return fmt(val,2);});})(i);
       row.innerHTML='<div class="leg-dot" style="background:'+a.color+'"></div><div class="leg-name">'+a.label+'</div>';
       row.appendChild(sp2);
     }
     row.appendChild(pct);leg.appendChild(row);
   });
 }
+
 function renderBarLegend(){
   var leg=document.getElementById('barLegend');leg.innerHTML='';
   var items=[{label:'BTC',color:'#f59e0b',fn:btcVal},{label:'ETH',color:'#6366f1',fn:ethVal},{label:'ALTs',color:'#22c55e',fn:altsVal}];
@@ -400,6 +403,7 @@ function renderBarLegend(){
     row.appendChild(sp);row.appendChild(pct);leg.appendChild(row);
   });
 }
+
 function renderHoldingGroup(arr,containerId){
   var list=document.getElementById(containerId);list.innerHTML='';
   arr.forEach(function(h,i){
@@ -410,12 +414,12 @@ function renderHoldingGroup(arr,containerId){
     rDiv.appendChild(vSp);
     if(h.borrowed>0){
       var bSp=document.createElement('span');bSp.className='h-borrow';
-      (function(i2){makeEditable(bSp,function(){return arr[i2].borrowed;},function(v){arr[i2].borrowed=v;},function(v){return '-'+fmt(v)+' borrowed';});})(i);
+      (function(idx){makeEditable(bSp,function(){return arr[idx].borrowed;},function(v){arr[idx].borrowed=v;},function(v){return '-'+fmt(v)+' borrowed';});})(i);
       rDiv.appendChild(bSp);
     }
     var uRow=document.createElement('div');uRow.style.cssText='font-size:0.72rem;color:var(--muted);margin-top:2px;display:flex;gap:6px;align-items:center;';
     var uSp=document.createElement('span');
-    (function(i2){makeEditable(uSp,function(){return arr[i2].units;},function(v){arr[i2].units=v;document.getElementById('hval-'+containerId+'-'+i2).textContent=fmt(holdingVal(arr[i2]),1);},function(v){return v+' '+h.sym;});})(i);
+    (function(idx){makeEditable(uSp,function(){return arr[idx].units;},function(v){arr[idx].units=v;document.getElementById('hval-'+containerId+'-'+idx).textContent=fmt(holdingVal(arr[idx]),1);},function(v){return v+' '+h.sym;});})(i);
     var pBadge=document.createElement('span');pBadge.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:0.65rem;';
     pBadge.textContent='@ '+fmt(h.price,2);
     uRow.appendChild(uSp);uRow.appendChild(pBadge);
@@ -424,19 +428,30 @@ function renderHoldingGroup(arr,containerId){
     d.appendChild(rDiv);list.appendChild(d);
   });
 }
+
 function renderOther(){
   var list=document.getElementById('otherList');list.innerHTML='';
   S.other.forEach(function(o,i){
     var d=document.createElement('div');d.className='h-item';
     var rDiv=document.createElement('div');rDiv.className='h-right';
-    var vSp=document.createElement('span');vSp.className='h-val';
-    if(o.manual){(function(i2){makeEditable(vSp,function(){return S.other[i2].val;},function(v){S.other[i2].val=v;},function(v){return fmt(v,2);});})(i);}
-    else{vSp.textContent=fmt(o.val||0,2);vSp.title='auto';}
-    rDiv.appendChild(vSp);
+    if(o.isAud){
+      var usdSp=document.createElement('span');usdSp.className='h-val';usdSp.textContent=fmt(audToUsd(o.audVal),2);usdSp.title='AUD x 0.65';
+      var audSp=document.createElement('span');audSp.style.cssText='font-size:0.72rem;color:var(--muted);display:block;margin-top:2px;';
+      (function(idx){makeEditable(audSp,function(){return S.other[idx].audVal||0;},function(v){S.other[idx].audVal=v;},function(v){return 'A$'+v+' AUD';});})(i);
+      rDiv.appendChild(usdSp);rDiv.appendChild(audSp);
+    } else if(o.manual){
+      var vSp=document.createElement('span');vSp.className='h-val';
+      (function(idx){makeEditable(vSp,function(){return S.other[idx].val||0;},function(v){S.other[idx].val=v;},function(v){return fmt(v,2);});})(i);
+      rDiv.appendChild(vSp);
+    } else {
+      var vSp2=document.createElement('span');vSp2.className='h-val';vSp2.textContent=fmt(o.val||0,2);vSp2.title='auto';
+      rDiv.appendChild(vSp2);
+    }
     d.innerHTML='<div class="h-left"><div class="h-icon" style="background:'+o.bg+';color:'+o.col+'">'+o.sym+'</div><div><div class="h-name">'+o.name+'</div><div class="h-units">'+o.sub+'</div></div></div>';
     d.appendChild(rDiv);list.appendChild(d);
   });
 }
+
 function refresh(){
   renderCards();renderStaking();renderDonutLegend();renderBarLegend();
   renderHoldingGroup(S.aave,'aaveList');renderHoldingGroup(S.ledger,'ledgerList');
@@ -444,38 +459,23 @@ function refresh(){
 }
 
 function fetchPrices(){
-  var audUsd=0.6943;
-  var cbPrices={},binPrices={},dexPrices={};
+  var cbPrices={},binPrices={};
   var cbSyms=['BTC','ETH','ADA','POL','BNB'];
   var binanceSyms={TON:'TONUSDT',AVAX:'AVAXUSDT',RNDR:'RNDRUSDT',SUPER:'SUPERUSDT',LINK:'LINKUSDT',BEAM:'BEAMUSDT',IMX:'IMXUSDT',SUI:'SUIUSDT',INJ:'INJUSDT',PRIME:'PRIMEUSDT',OP:'OPUSDT'};
-  var dexContracts={PAAL:'0x14fee680690900ba0cccfc76ad70fd1b95d10e16',NAKA:'0x311434160d7537be358930def317afb606c0d737',ANYONE:'0xfeac2eae96899709a43e252b6b92971d32f9c0f9',SFUND:'0x477bc8d23c634c154061869478bce96be6045d12'};
-  var cbFetches=cbSyms.map(function(sym){
+  var cbF=cbSyms.map(function(sym){
     return fetch('https://api.coinbase.com/v2/prices/'+sym+'-USD/spot').then(function(r){return r.json();}).then(function(d){if(d.data&&d.data.amount)cbPrices[sym]=parseFloat(d.data.amount);}).catch(function(){});
   });
-  var binFetches=Object.keys(binanceSyms).map(function(sym){
+  var binF=Object.keys(binanceSyms).map(function(sym){
     return fetch('https://api.binance.com/api/v3/ticker/price?symbol='+binanceSyms[sym]).then(function(r){return r.json();}).then(function(d){if(d.price)binPrices[sym]=parseFloat(d.price);}).catch(function(){});
   });
-  var dexFetches=Object.keys(dexContracts).map(function(sym){
-    return fetch('https://api.dexscreener.com/latest/dex/tokens/'+dexContracts[sym]).then(function(r){return r.json();}).then(function(d){
-      if(d.pairs&&d.pairs.length>0){
-        var pair=d.pairs.find(function(p){return p.quoteToken.symbol==='USDT'||p.quoteToken.symbol==='USDC';});
-        if(!pair)pair=d.pairs[0];
-        if(pair&&pair.priceUsd)dexPrices[sym]=parseFloat(pair.priceUsd);
-      }
-    }).catch(function(){});
-  });
-  return Promise.all(cbFetches.concat(binFetches).concat(dexFetches)).then(function(){
+  return Promise.all(cbF.concat(binF)).then(function(){
     cbPrices['WBTC']=cbPrices['BTC'];cbPrices['USDC']=1;
-    function p(sym){return cbPrices[sym]||binPrices[sym]||dexPrices[sym]||null;}
+    function p(sym){return cbPrices[sym]||binPrices[sym]||null;}
     S.aave.forEach(function(h){var px=h.sym==='WBTC'?p('BTC'):p(h.sym);if(px)h.price=px;});
     S.ledger.forEach(function(h){if(p(h.sym))h.price=p(h.sym);});
     S.revolut.forEach(function(r){if(p(r.sym))r.price=p(r.sym);});
     var rev=S.other.filter(function(o){return o.isRevolut;})[0];
     if(rev)rev.val=S.revolut.reduce(function(s,r){return s+r.units*r.price;},0);
-    var gt=0;
-    S.gaming.forEach(function(g){var px=p(g.sym);if(px){g.price=px;gt+=g.units*px;}else{gt+=g.audBal*audUsd;}});
-    var gai=S.other.filter(function(o){return o.isGaming;})[0];
-    if(gai)gai.val=gt;
   });
 }
 
