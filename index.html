@@ -110,7 +110,6 @@ footer{text-align:center;color:var(--muted);font-size:.7rem;margin-top:20px}
 <div class="cards">
   <div class="card c-tot"><div class="clabel">Total Portfolio</div><div class="cval prv" id="cTotal">-</div><div class="csub" id="cTotalSub">-</div></div>
   <div class="card c-cry"><div class="clabel">Total Crypto</div><div class="cval prv" id="cCrypto">-</div><div class="csub">Staking + Ledger + Revolut + Gaming</div></div>
-  <div class="card c-stk"><div class="clabel">Staking P&amp;L</div><div class="cval prv" id="cSpnl">-</div><div class="csub prv" id="cSpnlSub">-</div></div>
   <div class="card c-re"><div class="clabel">Real Estate</div><div class="cval prv" id="cRE" style="color:#10b981">-</div><div class="csub">Departamento en Pozo</div></div>
 </div>
 
@@ -337,7 +336,7 @@ function initCharts(){
   });
   barChart=new Chart(document.getElementById('barChart').getContext('2d'),{
     type:'bar',
-    data:{labels:['BTC','ETH','ALTs'],datasets:[{data:[btcVal(),ethVal(),altsVal()],backgroundColor:['#f59e0b','#6366f1','#22c55e'],borderRadius:8,borderSkipped:false}]},
+    data:{labels:['BTC','ETH','ALTs'],datasets:[{data:[btcVal(),ethVal(),altsVal()],backgroundColor:['#f59e0b','#6366f1','#f472b6'],borderRadius:8,borderSkipped:false}]},
     options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+fmt(c.parsed.y);}}}},scales:{x:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8'}},y:{grid:{color:'#2e325044'},ticks:{color:'#7b82a8',callback:function(v){return '$'+(v/1000).toFixed(0)+'k';}}}},animation:{duration:400}}
   });
 }
@@ -403,7 +402,7 @@ function renderDonutLeg(){
 
 function renderBarLeg(){
   var leg=document.getElementById('barLeg'); leg.innerHTML='';
-  var items=[{l:'BTC',c:'#f59e0b',f:btcVal},{l:'ETH',c:'#6366f1',f:ethVal},{l:'ALTs',c:'#22c55e',f:altsVal}];
+  var items=[{l:'BTC',c:'#f59e0b',f:btcVal},{l:'ETH',c:'#6366f1',f:ethVal},{l:'ALTs',c:'#f472b6',f:altsVal}];
   var tot=items.reduce(function(s,c){return s+c.f();},0);
   items.forEach(function(c){
     var v=c.f(), row=document.createElement('div'); row.className='lrow';
