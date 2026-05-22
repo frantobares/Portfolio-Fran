@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -175,10 +176,7 @@ var S = {
     {net:'Solana',        tok:'SOL/BONK/JUP/TRUMP', inv:2156, cur:1670},
     {net:'Polygon',       tok:'MATIC/POL',          inv:342,  cur:342}
   ],
-  aave: [
-    {sym:'WBTC', name:'WBTC', units:0.1068, price:69200, borrowed:4553, bg:'#2a1a00', col:'#fb923c'},
-    {sym:'USDC', name:'USDC', units:1041,   price:1,     borrowed:0,    bg:'#002a1a', col:'#22c55e'}
-  ],
+  aave: [],
   ledger: [
     {sym:'ETH', name:'ETH', units:6.82348, price:2110,  borrowed:0, bg:'#1a1a3a', col:'#6366f1'},
     {sym:'BTC', name:'BTC', units:0.1556,  price:69200, borrowed:0, bg:'#2a1f00', col:'#f59e0b'},
@@ -218,8 +216,8 @@ function cryptoTotal(){
 function reTotal(){ return S.realestate.entrega+(S.realestate.cuota*S.realestate.pagadas); }
 function allocVal(a){ return a.auto?cryptoTotal():a.isRE?reTotal():(a.val||0); }
 function allocTotal(){ return S.alloc.reduce(function(s,a){return s+allocVal(a);},0); }
-function btcVal(){ return S.aave.filter(function(l){return l.sym==='WBTC';}).reduce(function(s,l){return s+hval(l);},0)+S.ledger.filter(function(l){return l.sym==='BTC';}).reduce(function(s,l){return s+hval(l);},0); }
-function ethVal(){ return S.ledger.filter(function(l){return l.sym==='ETH';}).reduce(function(s,l){return s+hval(l);},0)+S.staking.filter(function(r){return r.net==='Arbitrum';}).reduce(function(s,r){return s+r.cur;},0); }
+function btcVal(){ return S.ledger.filter(function(l){return l.sym==='BTC';}).reduce(function(s,l){return s+hval(l);},0); }
+function ethVal(){ return S.ledger.filter(function(l){return l.sym==='ETH';}).reduce(function(s,l){return s+hval(l);},0); }
 function altsVal(){ return Math.max(0,cryptoTotal()-btcVal()-ethVal()); }
 
 var hidden=false, isLight=false;
