@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -346,14 +347,10 @@ function updateCharts(){
 function updateTs(){ document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
 
 function renderCards(){
-  var tot=allocTotal(), cry=cryptoTotal(), spnl=sCur()-sInv();
+  var tot=allocTotal(), cry=cryptoTotal();
   document.getElementById('cTotal').textContent=fmt(tot);
   document.getElementById('cTotalSub').textContent=S.alloc.length+' categories';
   document.getElementById('cCrypto').textContent=fmt(cry);
-  var spEl=document.getElementById('cSpnl');
-  spEl.textContent=(spnl>=0?'+':'')+fmt(spnl);
-  spEl.className='cval prv '+(spnl>=0?'posc':'negc');
-  document.getElementById('cSpnlSub').textContent='Invested '+fmt(sInv())+' - Now '+fmt(sCur());
   document.getElementById('cRE').textContent=fmt(reTotal());
   document.getElementById('donutVal').textContent=fmt(tot);
 }
