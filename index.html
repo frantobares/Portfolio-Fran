@@ -439,6 +439,11 @@ function renderOther(){
       var as=document.createElement('span'); as.style.cssText='font-size:.72rem;color:var(--muted);display:block;margin-top:2px';
       (function(ix){makeEditable(as,function(){return S.other[ix].audVal||0;},function(v){S.other[ix].audVal=v;},function(v){return 'A$'+v+' AUD';});})(i);
       rd.appendChild(us); rd.appendChild(as);
+    } else if(o.isRev){
+      var vr=document.createElement('span'); vr.className='hval'; vr.textContent=fmt(o.val||0,2); vr.title='precio auto';
+      var ar=document.createElement('span'); ar.style.cssText='font-size:.72rem;color:var(--muted);display:block;margin-top:2px';
+      (function(ix){makeEditable(ar,function(){return S.revolut[0].units;},function(v){S.revolut[0].units=v;S.other[ix].val=S.revolut.reduce(function(s,r){return s+r.units*r.price;},0);},function(v){return v+' BTC';});})(i);
+      rd.appendChild(vr); rd.appendChild(ar);
     } else if(o.manual){
       var vs=document.createElement('span'); vs.className='hval';
       (function(ix){makeEditable(vs,function(){return S.other[ix].val||0;},function(v){S.other[ix].val=v;},function(v){return fmt(v,2);});})(i);
