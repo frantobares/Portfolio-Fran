@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -211,7 +212,7 @@ function cryptoTotal(){
 function reTotal(){ return S.realestate.entrega+(S.realestate.cuota*S.realestate.pagadas); }
 function allocVal(a){ return a.auto?cryptoTotal():a.isRE?reTotal():(a.val||0); }
 function allocTotal(){ return S.alloc.reduce(function(s,a){return s+allocVal(a);},0); }
-function btcVal(){ return S.ledger.filter(function(l){return l.sym==='BTC';}).reduce(function(s,l){return s+hval(l);},0); }
+function btcVal(){ return S.ledger.filter(function(l){return l.sym==='BTC';}).reduce(function(s,l){return s+hval(l);},0)+S.revolut.filter(function(r){return r.sym==='BTC';}).reduce(function(s,r){return s+r.units*r.price;},0); }
 function ethVal(){ return S.ledger.filter(function(l){return l.sym==='ETH';}).reduce(function(s,l){return s+hval(l);},0); }
 function altsVal(){ return Math.max(0,cryptoTotal()-btcVal()-ethVal()); }
 
@@ -229,8 +230,13 @@ function toggleTheme(){
   localStorage.setItem('theme',isLight?'light':'dark');
 }
 function doExport(){
+  saveState();
+  var html=document.documentElement.outerHTML;
+  var i1=html.indexOf('var S = {');
+  var i2=html.indexOf('\n\nfunction fmt',i1);
+  if(i1>-1&&i2>-1) html=html.slice(0,i1)+'var S = '+JSON.stringify(S)+';'+html.slice(i2);
   var a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([document.documentElement.outerHTML],{type:'text/html'}));
+  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
   a.download='portfolio_fran_'+new Date().toISOString().slice(0,10)+'.html';
   a.click(); URL.revokeObjectURL(a.href);
 }
@@ -241,6 +247,7 @@ function saveState(){
     staking: S.staking.map(function(r){return{inv:r.inv,cur:r.cur};}),
     aave:    S.aave.map(function(h){return{units:h.units,borrowed:h.borrowed};}),
     ledger:  S.ledger.map(function(h){return{units:h.units};}),
+    revolut: S.revolut.map(function(r){return{units:r.units};}),
     other:   S.other.map(function(o){return{val:o.val||0,audVal:o.audVal||0};}),
     alloc:   S.alloc.map(function(a){return{val:a.val||0};}),
     realestate: {entrega:S.realestate.entrega,cuota:S.realestate.cuota,pagadas:S.realestate.pagadas,total_cuotas:S.realestate.total_cuotas}
@@ -253,6 +260,7 @@ function loadState(){
     if(s.staking) s.staking.forEach(function(r,i){if(S.staking[i]){S.staking[i].inv=r.inv;S.staking[i].cur=r.cur;}});
     if(s.aave)    s.aave.forEach(function(h,i){if(S.aave[i]){S.aave[i].units=h.units;S.aave[i].borrowed=h.borrowed;}});
     if(s.ledger)  s.ledger.forEach(function(h,i){if(S.ledger[i])S.ledger[i].units=h.units;});
+    if(s.revolut) s.revolut.forEach(function(r,i){if(S.revolut[i])S.revolut[i].units=r.units;});
     if(s.other)   s.other.forEach(function(o,i){if(S.other[i]){S.other[i].val=o.val;S.other[i].audVal=o.audVal;}});
     if(s.alloc)   s.alloc.forEach(function(a,i){if(S.alloc[i]&&!S.alloc[i].auto)S.alloc[i].val=a.val;});
     if(s.realestate){S.realestate.entrega=s.realestate.entrega||0;S.realestate.cuota=s.realestate.cuota||0;S.realestate.pagadas=s.realestate.pagadas||0;S.realestate.total_cuotas=s.realestate.total_cuotas||0;}
@@ -470,7 +478,7 @@ function renderRealEstate(){
     var item=document.createElement('div'); item.className='hitem';
     var lbl=document.createElement('span'); lbl.style.cssText='color:var(--muted);font-size:.88rem'; lbl.textContent=r.label;
     var sp=document.createElement('span'); sp.style.fontWeight='700';
-    makeEditable(sp,r.getter,function(v){r.setter(v);saveState();updateTs();renderRealEstate();},r.fmt);
+    makeEditable(sp,r.getter,function(v){r.setter(v);},r.fmt);
     item.appendChild(lbl); item.appendChild(sp); body.appendChild(item);
   });
   if(re.total_cuotas>0){
